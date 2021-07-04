@@ -79,21 +79,21 @@ leftEL.addEventListener('click', getClicks);
 rightEL.addEventListener('click', getClicks);
 middleEL.addEventListener('click', getClicks);
 
-let ulEL = document.getElementById('results contanier');
+let ulEL = document.getElementById('resultsContanier');
 
 function getClicks(event) {
   if (att <= maxAtt) {
     let clickedimg = event.target.id;
 
     createImg();
-    if (clickedimg === 'leftEL') {
+    if (clickedimg === 'leftimg') {
       newnames[leftIndex].votes++;
 
-    } else if (clickedimg === 'middleEL') {
-      newnames[middleEL].votes++;
+    } else if (clickedimg === 'middleimg') {
+      newnames[middleIndex].votes++;
 
-    } else if (clickedimg === 'rightEL') {
-      newnames[rightEL].votes++;
+    } else if (clickedimg === 'rightimg') {
+      newnames[rightIndex].votes++;
     }
   } else {
     for (let i = 0; i < newnames.length; i++) {
@@ -109,3 +109,5 @@ function getClicks(event) {
   att++;
 
 }
+
+
