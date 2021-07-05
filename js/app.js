@@ -107,15 +107,11 @@ function getClicks(event) {
     } else if (clickedimg === 'rightimg') {
       newnames[rightIndex].votes++;
     }
-
   }
-  
-
-
 }
+//_____________________________________end
 
-
-
+//_____________________________________button function
 function getResults(){
   for (let i = 0; i < newnames.length; i++) {
     let liEL = document.createElement('li');
@@ -132,8 +128,9 @@ function getResults(){
   majedChart();
 
 }
-
 //_____________________________________end
+
+
 
 
 //_____________________________________chart function
