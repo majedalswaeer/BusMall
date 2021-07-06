@@ -7,14 +7,68 @@ let butEL = document.getElementById('resultsClick');
 butEL.addEventListener('click' , getResults);
 
 
+
 let mallArr = ['bag.jpg', 'banana.jpg', 'bathroom.jpg', 'boots.jpg', 'breakfast.jpg', 'bubblegum.jpg', 'chair.jpg', 'cthulhu.jpg', 'dog-duck.jpg', 'dragon.jpg', 'pen.jpg', 'pet-sweep.jpg', 'scissors.jpg', 'shark.jpg', 'sweep.png', 'tauntaun.jpg', 'unicorn.jpg', 'water-can.jpg', 'wine-glass.jpg'];
 
 let newnames = [];
 let att = 1;
-let maxAtt = 25;
+let maxAtt = 3;
 let chartNames = [];
 let votesChart =[];
 let viewsChart =[];
+let iterImg=[];
+
+
+
+
+//_____________________________________local storage
+function mylocalStorage(){
+  let dataSet = JSON.stringify(newnames);
+  let viewSet = JSON.stringify(viewsChart);
+  let voteSet = JSON.stringify(votesChart);
+  let imgSet = JSON.stringify(iterImg);
+  console.log(voteSet);
+
+  localStorage.setItem =('localData',dataSet);
+  localStorage.setItem=('localview',viewSet);
+  localStorage.setItem=('localVotes',voteSet);
+  localStorage.setItem=('localImg',imgSet);
+
+}
+
+function readLocalStorage(){
+  let strData = localStorage.getItem('localData');
+  let strView = localStorage.getItem('localview');
+  let strVote = localStorage.getItem('localVotes');
+  let strImg = localStorage.getItem('localImg');
+
+  let obData = JSON.parse(strData);
+  let obViews = JSON.parse(strView);
+  let obVote = JSON.parse(strVote);
+  let obImg = JSON.parse(strImg);
+
+  if(obData !== null){
+    newnames = obData;
+    createImg();
+
+  }
+  if(obViews !== null){
+    viewsChart = obViews;
+    createImg();
+  }
+  if(obVote !== null){
+    votesChart = obVote;
+    createImg();
+  }
+  if(obImg !== null){
+    iterImg = obImg;
+    createImg();
+  }
+
+}
+
+readLocalStorage();
+//_____________________________________end
 
 //_____________________________________ Constructer
 function Busmall(imgNamee) {
@@ -24,8 +78,8 @@ function Busmall(imgNamee) {
   this.votes = 0;
   chartNames.push(this.name);
   newnames.push(this);
+  mylocalStorage();
 }
-//_____________________________________end
 
 //_____________________________________for loop to create new imgs
 for (let i = 0; i < mallArr.length; i++) {
@@ -53,16 +107,23 @@ let rightIndex;
 //_____________________________________end
 
 
+
 //_____________________________________render imgs
 function createImg() {
   leftIndex = randImg();
   middleIndex = randImg();
   rightIndex = randImg();
 
-  while (leftIndex === middleIndex || rightIndex === middleIndex || leftIndex=== rightIndex) {
+  while (leftIndex === middleIndex || rightIndex === middleIndex || leftIndex=== rightIndex || iterImg.includes(leftIndex) || iterImg.includes(middleIndex) || iterImg.includes(rightIndex)) {
     leftIndex = randImg();
+    middleIndex = randImg();
     rightIndex = randImg();
   }
+
+  iterImg=[];
+  iterImg.push(leftIndex);
+  iterImg.push(middleIndex);
+  iterImg.push(rightIndex);
 
   leftEL.setAttribute('src', newnames[leftIndex].img);
   leftEL.setAttribute('title', newnames[leftIndex].name);
@@ -77,6 +138,7 @@ function createImg() {
   newnames[leftIndex].views++;
   newnames[middleIndex].views++;
   newnames[rightIndex].views++;
+  mylocalStorage();
 
 
 }
@@ -93,6 +155,7 @@ middleEL.addEventListener('click', getClicks);
 
 
 function getClicks(event) {
+  event.preventDefault();
   if (att <= maxAtt) {
     let clickedimg = event.target.id;
     att++;
@@ -100,7 +163,6 @@ function getClicks(event) {
     createImg();
     if (clickedimg === 'leftimg') {
       newnames[leftIndex].votes++;
-
     } else if (clickedimg === 'middleimg') {
       newnames[middleIndex].votes++;
 
@@ -108,11 +170,14 @@ function getClicks(event) {
       newnames[rightIndex].votes++;
     }
   }
+
 }
 //_____________________________________end
 
 //_____________________________________button function
 function getResults(){
+  ulEL.textContent='';
+
   for (let i = 0; i < newnames.length; i++) {
     let liEL = document.createElement('li');
     liEL.textContent = `${newnames[i].name}img has ${newnames[i].views} views and ${newnames[i].votes} votes`;
@@ -120,11 +185,15 @@ function getResults(){
     votesChart.push(newnames[i].votes);
     viewsChart.push(newnames[i].views);
   }
+  let h1EL = document.getElementById('h1');
+  h1EL.textContent=('Here are your results:');
+  let h2EL = document.getElementById('h12');
+  h2EL.textContent = ('Chart is below:');
 
   leftEL.removeEventListener('click',getClicks);
   middleEL.removeEventListener('click',getClicks);
   rightEL.removeEventListener('click',getClicks);
-  createImg();
+  // createImg();
   majedChart();
 
 }
@@ -162,7 +231,8 @@ function majedChart(){
         borderWidth: 1
       }]
     },
-    options: {
+    options: { responsive: false,
+      maintainAspectRatio: true,
       scales: {
         y: {
           beginAtZero: true
